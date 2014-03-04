@@ -4,6 +4,7 @@
     <string name="app_name">Clubs@Nitk</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="app_id">1411819162400532</string>
+    <string name="app_id">233311873522587</string>
+    <string name="title_activity_group">GroupActivity</string>
 
 </resources>
