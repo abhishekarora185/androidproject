@@ -220,7 +220,8 @@ def comment_add(request):
 				new_comment_list.append(new_comment)
 				print new_comment_list
 				query = {"_id":post['_id']}
-				posts.update(query,{"comments" : new_comment_list}) #updating comments list.
+				new_post = {"author":post['author'],"type":post['type'],"content":post['content'],"group":post['group'],"comments":new_comment_list}
+				posts.update(query,new_post) #updating comments list.
 				print "Comment saved"
 			else:
 				print post['_id'] , request.POST['post_id']
