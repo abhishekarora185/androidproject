@@ -24,4 +24,8 @@ urlpatterns += patterns('',
 urlpatterns += patterns('',
 	url(r'^groups/?',group_view),
 )
+urlpatterns += patterns('',
+	url(r'^addcom/?',comment_add),
+)
+
 

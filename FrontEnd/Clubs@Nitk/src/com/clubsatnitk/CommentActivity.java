@@ -1,4 +1,3 @@
-//Returns the posts belonging to the group name entered.
 package com.clubsatnitk;
 
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.views.GetViews;
+import com.views.PostViews;
 
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -27,21 +27,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class GroupActivity extends Activity {
+public class CommentActivity extends Activity {
 
+	public String sample_post_id = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_group);
-		//Needed to make sure that Http requests do not run on the main thread
+		setContentView(R.layout.activity_comment);//Needed to make sure that Http requests do not run on the main thread
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy); 
 		
-		final TextView posts = (TextView) findViewById(R.id.group_posts);
-		final EditText name = (EditText)findViewById(R.id.group_name);
-		final Button submit = (Button)findViewById(R.id.group_submit);
-		final Button back = (Button)findViewById(R.id.mainintent);
-		
+		final EditText post_id = (EditText) findViewById(R.id.post_id);
+		final EditText comment = (EditText)findViewById(R.id.maintocomment);
+		final Button submitcomment = (Button)findViewById(R.id.submitcomment);
+		final Button back = (Button)findViewById(R.id.backmain);
+	
 		// start Facebook Login
 	    Session.openActiveSession(this, true, new Session.StatusCallback() {
 
@@ -58,60 +58,60 @@ public class GroupActivity extends Activity {
 	            public void onCompleted(GraphUser user, Response response) {
 	            	
 	            	if (user != null) {
-	                posts.setText("Hello " + user.getName() + "!");
+	                comment.setText("Hello " + user.getName() + "!");
 	              }
 	            }
 	          });
 	        }
 	      }
 	    });
-	    submit.setOnClickListener(new OnClickListener() {
+	    ArrayList<NameValuePair> map = new ArrayList<NameValuePair>();
+		map.add(new BasicNameValuePair("access_token", Session.getActiveSession().getAccessToken()));
+	    try {
+			JSONArray response = GetViews.posts(map);
+			
+			if(response.length()>1)
+			{
+				JSONObject childJSONObject = response.getJSONObject(0);
+				sample_post_id = childJSONObject.getString("post_id");
+				}
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    if(sample_post_id!=null)
+	    {
+	    	post_id.setText(sample_post_id);
+	    }
+	    submitcomment.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				ArrayList<NameValuePair> map = new ArrayList<NameValuePair>();
 				map.add(new BasicNameValuePair("access_token", Session.getActiveSession().getAccessToken()));
-				map.add(new BasicNameValuePair("group_id", name.getText().toString()));
-				StringBuilder stringBuilder = new StringBuilder();
-				String finalString = "   "; 
-				try {
-					JSONArray response =  GetViews.groups(map);
-					for (int i = 0; i < response.length() && i<5; i++) {  // **line 2**
-					     JSONObject childJSONObject = response.getJSONObject(i);
-					     
-					     stringBuilder.append(childJSONObject.getString("author"));
-					     stringBuilder.append("\n");
-					     stringBuilder.append(childJSONObject.getString("content"));
-					     stringBuilder.append("\n");
-					     stringBuilder.append(childJSONObject.getString("comments"));
-					}
-					finalString = stringBuilder.toString(); 
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				posts.setText(finalString);
+				map.add(new BasicNameValuePair("content", comment.getText().toString()));
+				map.add(new BasicNameValuePair("post_id", sample_post_id));
+				PostViews.addcomment(map);
 			}
 		});
-	    
+	
 	    back.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent(GroupActivity.this,MainActivity.class);
+				Intent intent = new Intent(CommentActivity.this,MainActivity.class);
 				startActivity(intent);
-				
 			}
 		});
-	    
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.group, menu);
+		getMenuInflater().inflate(R.menu.comment, menu);
 		return true;
 	}
 

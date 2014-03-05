@@ -8,6 +8,7 @@ import datetime
 from django.utils import simplejson
 from django.views.decorators.csrf import csrf_exempt
 import json
+from bson import ObjectId
 
 #pymongo API to establish a connection to a mongo database server running on port no. 27017
 connection = Connection()
@@ -175,9 +176,11 @@ def group_view(request):
 			return HttpResponse(simplejson.dumps(response), mimetype="application/json")	
 	return "Faulty run"
 
-#Not tested. 
+#Not tested.
+@csrf_exempt
 def comment_add(request):
 
+	print "Authenticating"
 	auth_success = facebook_auth(request)
 	posts = db['Post']
 	users = db['User']
@@ -202,9 +205,22 @@ def comment_add(request):
 			users.save(curr_user)
 	#Authentication and lookup with user collection done. 
 	#Now to find the post using the post_id and adding the comment.
-	for post in posts:
-		if post['_id'] == ObjectId(request.GET['post_id']):
-			new_comment = {"author":curr_user,"content":request.POST['content']}
-			new_comment_list = post['comments'].append(new)
-			query = {"_id":post['_id']}
-			posts.update(query,{"comments" : new_comment_list}) #updating comments list.
+	if request.method == "POST":
+		print "Enters first if"
+		for post in posts.find():
+			print post
+			if str(post['_id']) == request.POST['post_id']:
+				print "Post found"
+				new_comment = {"author":curr_user,"content":request.POST['content']}
+				print new_comment
+				new_comment_list = []
+				for comment in post['comments']:
+					new_comment_list.append(comment)
+					print comment
+				new_comment_list.append(new_comment)
+				print new_comment_list
+				query = {"_id":post['_id']}
+				posts.update(query,{"comments" : new_comment_list}) #updating comments list.
+				print "Comment saved"
+			else:
+				print post['_id'] , request.POST['post_id']

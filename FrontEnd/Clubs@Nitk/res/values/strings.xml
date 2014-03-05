@@ -6,5 +6,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="app_id">233311873522587</string>
     <string name="title_activity_group">GroupActivity</string>
+    <string name="title_activity_comment">CommentActivity</string>
 
 </resources>

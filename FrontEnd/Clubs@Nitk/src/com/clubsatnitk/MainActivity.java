@@ -49,6 +49,7 @@ public class MainActivity extends Activity {
 		final Button button = (Button) findViewById(R.id.fetch);
 		final Button submit = (Button) findViewById(R.id.submit);
 		final Button group = (Button) findViewById(R.id.groupintent);
+		final Button maintocomment = (Button)findViewById(R.id.maintocomment);
 		welcome.setText("...");
 		
 		// start Facebook Login
@@ -159,6 +160,15 @@ public class MainActivity extends Activity {
 			}
 		});
 	    
+	    maintocomment.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(MainActivity.this,CommentActivity.class);
+				startActivity(intent);
+			}
+		});
 	  }
 	
 
