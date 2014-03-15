@@ -70,7 +70,7 @@ public class CommentActivity extends Activity {
 	    try {
 			JSONArray response = GetViews.posts(map);
 			
-			if(response.length()>1)
+			if(response.length()>=1)
 			{
 				JSONObject childJSONObject = response.getJSONObject(0);
 				sample_post_id = childJSONObject.getString("post_id");
@@ -90,9 +90,10 @@ public class CommentActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				ArrayList<NameValuePair> map = new ArrayList<NameValuePair>();
+				
 				map.add(new BasicNameValuePair("access_token", Session.getActiveSession().getAccessToken()));
 				map.add(new BasicNameValuePair("content", comment.getText().toString()));
-				map.add(new BasicNameValuePair("post_id", sample_post_id));
+				map.add(new BasicNameValuePair("post_id", post_id.getText().toString()));
 				PostViews.addcomment(map);
 			}
 		});

@@ -62,7 +62,6 @@ public class GetViews {
 		              Log.e("log_tag", "Error converting result "+e.toString());
 		              return null;
 		        }
-		
 		return new JSONArray(result);
 		
 	}
@@ -105,7 +104,7 @@ public static JSONArray groups(List<NameValuePair> params) throws JSONException{
 		              Log.e("log_tag", "Error converting result "+e.toString());
 		              return null;
 		        }
-		
+		System.out.println(result);
 		return new JSONArray(result);
 		
 	}

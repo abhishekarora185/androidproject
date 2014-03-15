@@ -144,6 +144,7 @@ public class MainActivity extends Activity {
 					finalString = stringBuilder.toString(); 
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
+					System.out.println("Response not proper");
 					e.printStackTrace();
 				}
 				welcome.setText(finalString);

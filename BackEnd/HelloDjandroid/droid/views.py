@@ -80,16 +80,6 @@ def posts_view(request):
 				curr_group = group
 				found = 1
 				break;
-		#added to sort out errors while testing. Should remove once group ids are given by the app and not inputted by user. From here.
-		if found == 1:
-			print "Group found"
-		else:
-			print "Adding new group"
-			curr_group = {"group_id":request.POST['group_id']}
-			print "New group"
-			print curr_group
-			groups.save(curr_group)
-		#Till here
 		print "Saving new post..."
 		new = {"content":request.POST['content'],"author":curr_user,"type":request.POST['type'],"group":curr_group,"comments":[]}
 		print new
@@ -100,7 +90,11 @@ def posts_view(request):
 		response = []
 		for post in posts.find():
 			if "author" in post.keys() and "group" in post.keys():
-				response.append({"content":post['content'],"author":post['author']['name'],"group_id":post['group']['group_id'],"type":post['type'],"comments":post['comments'],"post_id":str(post["_id"])})
+				comment_list = []
+				#ObjectID's are not JSON serializable. So converting them to string before calling dumps to prevent error.
+				for comment in post['comments']:
+					comment_list.append({"content":comment['content'],"author":{"id":str(comment['author']['_id']),"name":comment['author']['name'],"facebook_id":comment['author']['facebook_id']},"id":str(comment['_id'])})
+				response.append({"content":post['content'],"author":post['author']['name'],"group_id":post['group']['group_id'],"type":post['type'],"comments":comment_list,"post_id":str(post["_id"])})
 		print "Done searching."
 		
 		result = filter(response,request)
@@ -113,7 +107,10 @@ def posts_view(request):
 			return "No response"
 		else:
 			"Filtered:"
-			print response
+			#Debugging print statements
+			#print "Response : \n",response
+			#print "Dumps: \n",simplejson.dumps(response)
+			#print "HTTP Response : \n", HttpResponse(simplejson.dumps(response),mimetype = "application/json") 
 			return HttpResponse(simplejson.dumps(response), mimetype="application/json")	
 	return "Faulty run"
 
@@ -176,7 +173,6 @@ def group_view(request):
 			return HttpResponse(simplejson.dumps(response), mimetype="application/json")	
 	return "Faulty run"
 
-#Not tested.
 @csrf_exempt
 def comment_add(request):
 
@@ -206,22 +202,17 @@ def comment_add(request):
 	#Authentication and lookup with user collection done. 
 	#Now to find the post using the post_id and adding the comment.
 	if request.method == "POST":
-		print "Enters first if"
 		for post in posts.find():
-			print post
+			print request.POST['post_id']
 			if str(post['_id']) == request.POST['post_id']:
 				print "Post found"
-				new_comment = {"author":curr_user,"content":request.POST['content']}
-				print new_comment
+				new_comment = {"_id":post["_id"],"author":curr_user,"content":request.POST['content']}
 				new_comment_list = []
 				for comment in post['comments']:
 					new_comment_list.append(comment)
-					print comment
 				new_comment_list.append(new_comment)
-				print new_comment_list
 				query = {"_id":post['_id']}
 				new_post = {"author":post['author'],"type":post['type'],"content":post['content'],"group":post['group'],"comments":new_comment_list}
 				posts.update(query,new_post) #updating comments list.
+				print new_post
 				print "Comment saved"
-			else:
-				print post['_id'] , request.POST['post_id']
