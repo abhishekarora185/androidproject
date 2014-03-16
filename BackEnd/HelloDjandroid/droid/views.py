@@ -28,6 +28,7 @@ def facebook_auth(request):
 		return False
 	else:
 		print "Returning user..."
+		print user
 		return user
 		
 def filter(collection,criteria):
