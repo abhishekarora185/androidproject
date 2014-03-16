@@ -8,21 +8,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <TextView
-        android:id="@+id/tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
-
-    <Button
-        android:id="@+id/fetch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tv"
-        android:layout_below="@+id/tv"
-        android:layout_marginTop="52dp"
-        android:text="Fetch" />
-
     <EditText
         android:id="@+id/content"
         android:layout_width="wrap_content"
@@ -61,5 +46,41 @@
         android:layout_below="@+id/type"
         android:layout_marginTop="16dp"
         android:text="Submit" />
+
+    <Button
+        android:id="@+id/groupintent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/submit"
+        android:layout_alignBottom="@+id/submit"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="22dp"
+        android:text="GroupActivity" />
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/fetch"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="16dp"
+        android:text="HelloWorld" />
+
+    <Button
+        android:id="@+id/fetch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/maintocomment"
+        android:layout_below="@+id/tv"
+        android:layout_marginTop="60dp"
+        android:text="Fetch" />
+
+    <Button
+        android:id="@+id/maintocomment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="CommentActivity" />
 
 </RelativeLayout>

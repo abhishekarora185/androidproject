@@ -1,5 +1,6 @@
 package com.clubsatnitk;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +9,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -46,7 +48,8 @@ public class MainActivity extends Activity {
 		final EditText type = (EditText) findViewById(R.id.type);
 		final Button button = (Button) findViewById(R.id.fetch);
 		final Button submit = (Button) findViewById(R.id.submit);
-		
+		final Button group = (Button) findViewById(R.id.groupintent);
+		final Button maintocomment = (Button)findViewById(R.id.maintocomment);
 		welcome.setText("...");
 		
 		// start Facebook Login
@@ -76,7 +79,7 @@ public class MainActivity extends Activity {
 	        }
 	      }
 	    });
-	    
+	   /* 
 	    button.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -99,7 +102,7 @@ public class MainActivity extends Activity {
 		        }
 			}
 		});
-	    
+	    */
 	    submit.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -114,8 +117,61 @@ public class MainActivity extends Activity {
 				PostViews.posts(map);
 			}
 		});
+	   
+	    button.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				ArrayList<NameValuePair> map = new ArrayList<NameValuePair>();
+				map.add(new BasicNameValuePair("access_token", Session.getActiveSession().getAccessToken()));
+				//map.add(new BasicNameValuePair("content", content.getText().toString()));
+				//map.add(new BasicNameValuePair("group_id", group_id.getText().toString()));
+				//map.add(new BasicNameValuePair("type", type.getText().toString()));
+				StringBuilder stringBuilder = new StringBuilder();
+				String finalString = "   "; 
+				try {
+					JSONArray response =  GetViews.posts(map);
+					for (int i = 0; i < response.length() && i<5; i++) {  // **line 2**
+					     JSONObject childJSONObject = response.getJSONObject(i);
+					     
+					     stringBuilder.append(childJSONObject.getString("author"));
+					     stringBuilder.append("\n");
+					     stringBuilder.append(childJSONObject.getString("content"));
+					     stringBuilder.append("\n");
+					     stringBuilder.append(childJSONObject.getString("comments"));
+					}
+					finalString = stringBuilder.toString(); 
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					System.out.println("Response not proper");
+					e.printStackTrace();
+				}
+				welcome.setText(finalString);
+			}
+		});
 	    
+	    group.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(MainActivity.this,GroupActivity.class);
+				startActivity(intent);
+			}
+		});
+	    
+	    maintocomment.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(MainActivity.this,CommentActivity.class);
+				startActivity(intent);
+			}
+		});
 	  }
+	
 
 	  @Override
 	  public void onActivityResult(int requestCode, int resultCode, Intent data) {
