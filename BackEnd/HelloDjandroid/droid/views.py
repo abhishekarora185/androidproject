@@ -28,7 +28,6 @@ def facebook_auth(request):
 		return False
 	else:
 		print "Returning user..."
-		print user
 		return user
 		
 def filter(collection,criteria):
@@ -38,9 +37,7 @@ def filter(collection,criteria):
 		print item
 		passed = True
 		for key in criteria.GET:
-			print key
 			if not key == 'access_token' and not item[key] == criteria.GET[key]:
-				print "Hello"
 				passed = False
 				break
 		if passed == True:
@@ -108,6 +105,7 @@ def posts_view(request):
 			return "No response"
 		else:
 			"Filtered:"
+			print response
 			#Debugging print statements
 			#print "Response : \n",response
 			#print "Dumps: \n",simplejson.dumps(response)

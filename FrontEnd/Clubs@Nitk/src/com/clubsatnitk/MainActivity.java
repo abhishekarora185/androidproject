@@ -16,6 +16,7 @@ import android.os.StrictMode;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,7 +41,9 @@ public class MainActivity extends Activity {
 		
 		//Needed to make sure that Http requests do not run on the main thread
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-		StrictMode.setThreadPolicy(policy); 
+		StrictMode.setThreadPolicy(policy);
+		
+		final String post_ids[] = new String[100];
 		
 		final TextView welcome = (TextView) findViewById(R.id.tv);
 		final EditText content = (EditText) findViewById(R.id.content);
@@ -125,21 +128,33 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated method stub
 				ArrayList<NameValuePair> map = new ArrayList<NameValuePair>();
 				map.add(new BasicNameValuePair("access_token", Session.getActiveSession().getAccessToken()));
-				//map.add(new BasicNameValuePair("content", content.getText().toString()));
-				//map.add(new BasicNameValuePair("group_id", group_id.getText().toString()));
-				//map.add(new BasicNameValuePair("type", type.getText().toString()));
+				map.add(new BasicNameValuePair("type", "public"));
 				StringBuilder stringBuilder = new StringBuilder();
-				String finalString = "   "; 
+				String finalString = "   ";
+				int posts_loaded = 0;
 				try {
 					JSONArray response =  GetViews.posts(map);
+					Log.d("response",response.toString());
 					for (int i = 0; i < response.length() && i<5; i++) {  // **line 2**
 					     JSONObject childJSONObject = response.getJSONObject(i);
 					     
-					     stringBuilder.append(childJSONObject.getString("author"));
+					     stringBuilder.append("Author: " + childJSONObject.getString("author"));
 					     stringBuilder.append("\n");
-					     stringBuilder.append(childJSONObject.getString("content"));
+					     stringBuilder.append("Content: " + childJSONObject.getString("content"));
 					     stringBuilder.append("\n");
-					     stringBuilder.append(childJSONObject.getString("comments"));
+					     stringBuilder.append("Comments: \n");
+					     
+					     //needed to facilitate adding comments through UI
+					     post_ids[posts_loaded] = childJSONObject.getString("post_id");
+					     posts_loaded++;
+					     
+					     for(int j =0; j < childJSONObject.getJSONArray("comments").length(); j++)
+					     {
+					    	 JSONObject comment = childJSONObject.getJSONArray("comments").getJSONObject(j);
+					    	 
+					    	 stringBuilder.append("Author: " +  comment.getJSONObject("author").getString("name") + "\n");
+					    	 stringBuilder.append("Content: " +  comment.getString("content") + "\n");
+					     }
 					}
 					finalString = stringBuilder.toString(); 
 				} catch (JSONException e) {
