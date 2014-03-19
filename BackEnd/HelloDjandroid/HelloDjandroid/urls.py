@@ -27,5 +27,12 @@ urlpatterns += patterns('',
 urlpatterns += patterns('',
 	url(r'^addcom/?',comment_add),
 )
-
-
+urlpatterns += patterns('',
+	url(r'^addcom/?',comment_add),
+)
+urlpatterns += patterns('',
+	url(r'^users/?',user_view),
+)
+urlpatterns += patterns('',
+	url(r'^requests/?',request_view),
+)

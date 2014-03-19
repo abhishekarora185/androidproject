@@ -62,6 +62,7 @@ public class GetViews {
 		              Log.e("log_tag", "Error converting result "+e.toString());
 		              return null;
 		        }
+		System.out.println(result);
 		return new JSONArray(result);
 		
 	}
@@ -75,6 +76,93 @@ public static JSONArray groups(List<NameValuePair> params) throws JSONException{
 		     HttpClient httpclient = new DefaultHttpClient();
 		     
 		     String url = "http://10.0.2.2:8000/groups?";
+			 url += URLEncodedUtils.format(params, "utf-8"); 
+		     
+		     HttpGet http = new HttpGet(url);
+		     
+		     HttpResponse response = httpclient.execute(http);
+		     HttpEntity entity = response.getEntity();
+		     is = entity.getContent();
+		     }catch(Exception e){
+		         Log.e("log_tag", "Error in http connection"+e.toString());
+		         return null;
+		    }
+		Log.d("Connection","success");
+
+		//this block converts the response to string
+		try{
+		      BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"),8);
+		       sb = new StringBuilder();
+		       sb.append(reader.readLine() + "\n");
+
+		       String line="0";
+		       while ((line = reader.readLine()) != null) {
+		                      sb.append(line + "\n");
+		        }
+		        is.close();
+		        result=sb.toString();
+		        }catch(Exception e){
+		              Log.e("log_tag", "Error converting result "+e.toString());
+		              return null;
+		        }
+		System.out.println(result);
+		return new JSONArray(result);
+		
+	}
+
+
+
+	public static JSONArray users(List<NameValuePair> params) throws JSONException{
+	
+		InputStream is=null;
+		String result = null;
+		StringBuilder sb=null; 
+		try{	//this block establishes the connection to the server
+			HttpClient httpclient = new DefaultHttpClient();
+	     
+			String url = "http://10.0.2.2:8000/users?";
+			url += URLEncodedUtils.format(params, "utf-8"); 
+	     
+			HttpGet http = new HttpGet(url);
+	     
+			HttpResponse response = httpclient.execute(http);
+			HttpEntity entity = response.getEntity();
+			is = entity.getContent();
+	     	}catch(Exception e){
+	     		Log.e("log_tag", "Error in http connection"+e.toString());
+	     		return null;
+	     	}
+		Log.d("Connection","success");
+
+		//this block converts the response to string
+		try{
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"),8);
+			sb = new StringBuilder();
+			sb.append(reader.readLine() + "\n");
+
+			String line="0";
+			while ((line = reader.readLine()) != null) {
+	                      sb.append(line + "\n");
+	        	}
+	        is.close();
+	        result=sb.toString();
+	        }catch(Exception e){
+	              Log.e("log_tag", "Error converting result "+e.toString());
+	              return null;
+	        }
+		System.out.println(result);
+		return new JSONArray(result);
+	
+	}
+	public static JSONArray requests(List<NameValuePair> params) throws JSONException{
+		
+		InputStream is=null;
+		String result = null;
+		StringBuilder sb=null; 
+		try{	//this block establishes the connection to the server
+		     HttpClient httpclient = new DefaultHttpClient();
+		     
+		     String url = "http://10.0.2.2:8000/requests?";
 			 url += URLEncodedUtils.format(params, "utf-8"); 
 		     
 		     HttpGet http = new HttpGet(url);

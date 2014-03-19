@@ -83,4 +83,21 @@
         android:layout_alignParentLeft="true"
         android:text="CommentActivity" />
 
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv"
+        android:layout_marginTop="16dp"
+        android:layout_toRightOf="@+id/content"
+        android:text="User" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button1"
+        android:layout_below="@+id/fetch"
+        android:text="Request" />
+
 </RelativeLayout>

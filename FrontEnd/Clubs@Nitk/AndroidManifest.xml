@@ -38,6 +38,14 @@
             android:name="com.clubsatnitk.CommentActivity"
             android:label="@string/title_activity_comment" >
         </activity>
+        <activity
+            android:name="com.clubsatnitk.UserActivity"
+            android:label="@string/title_activity_user" >
+        </activity>
+        <activity
+            android:name="com.clubsatnitk.RequestActivity"
+            android:label="@string/title_activity_request" >
+        </activity>
     </application>
 
 </manifest>

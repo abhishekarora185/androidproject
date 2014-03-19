@@ -115,7 +115,7 @@ def posts_view(request):
 	return "Faulty run"
 
 def group_view(request):
-#Returns all posts associated with the group
+
 	auth_success = facebook_auth(request)
 	posts = db['Post']
 	users = db['User']
@@ -139,27 +139,11 @@ def group_view(request):
 			print users
 			users.save(curr_user)
 	#Authentication and lookup with user collection done. 
-	#Now to return posts.  
-	response = []
 	if request.method == 'GET' and not curr_user == "":
-		print "Looking up group..."
-		curr_group = ""
 		response = []		
-		#Find group.
 		for group in groups.find():
-			if group['group_id'] == request.GET['group_id']:
-				curr_group = group
-				print "Group Found"
-		#Iterate through and append all posts with relevant group ID.
-		if not curr_group == "":
-			for post in posts.find():
-				if post['group'] == curr_group:
-					response.append({"content":post['content'],"author":post['author']['name'],"comments":post['comments'],"group_id":curr_group['group_id'],"type":post['type']})
-		print "Done searching"
-		print "Response",response
-		result = response
-		#result = filter(response,request) 
-		#TODO :Filter fails. item['group_id'] does not exit. only ['group'] does. FIX! 
+			response.append({"group_id":group['group_id'],"id":str(group['_id']),"members":group['members'],'admins':group['admins'],'requests':group['requests']})
+		result = filter(response,request) 
 		response = []
 		for entry in result:
 			response.append(entry)
@@ -201,7 +185,7 @@ def comment_add(request):
 			users.save(curr_user)
 	#Authentication and lookup with user collection done. 
 	#Now to find the post using the post_id and adding the comment.
-	if request.method == "POST":
+	if request.method == "POST" and not curr_user == "":
 		for post in posts.find():
 			print request.POST['post_id']
 			if str(post['_id']) == request.POST['post_id']:
@@ -216,3 +200,112 @@ def comment_add(request):
 				posts.update(query,new_post) #updating comments list.
 				print new_post
 				print "Comment saved"
+
+def user_view(request):
+	
+	print "Authenticating"
+	auth_success = facebook_auth(request)
+	posts = db['Post']
+	users = db['User']
+	groups = db['Group']
+	
+	curr_user = ''
+	
+	if not auth_success == False:
+		found = 0
+		for user in users.find():
+			if auth_success['username'] == user['facebook_id']:
+				found = 1
+				curr_user = user
+				break
+		if found == 1:
+			print "User already exists, " + str(curr_user['name'])
+		else:
+			print "Adding new user."
+			curr_user = {"name":auth_success['name'],"facebook_id":auth_success['username']}
+			print "New user"
+			print users
+			users.save(curr_user)
+
+	if request.method == "GET" and not curr_user == "":
+		response = []
+		for user in users.find():
+			response.append({"name":user['name'],"facebook_id":user['facebook_id']})
+		print "Done searching."
+		
+		result = filter(response,request)
+		response = []
+		for entry in result:
+			response.append(entry)
+		
+		if response == []:
+			print "No posts found"
+			return "No response"
+		else:
+			"Filtered"
+			return HttpResponse(simplejson.dumps(response),mimetype = "application/json")
+	return "Faulty run"
+
+@csrf_exempt
+def request_view(request):
+	
+	print "Authenticating"
+	auth_success = facebook_auth(request)
+	posts = db['Post']
+	users = db['User']
+	groups = db['Group']
+	
+	curr_user = ''
+	
+	if not auth_success == False:
+		found = 0
+		for user in users.find():
+			if auth_success['username'] == user['facebook_id']:
+				found = 1
+				curr_user = user
+				break
+		if found == 1:
+			print "User already exists, " + str(curr_user['name'])
+		else:
+			print "Adding new user."
+			curr_user = {"name":auth_success['name'],"facebook_id":auth_success['username']}
+			print "New user"
+			print users
+			users.save(curr_user)
+		if request.method == 'POST' and not curr_user == "":
+			new_req = {"id":str(curr_user['_id']),"name":curr_user['name'],"facebook_id":curr_user['facebook_id']}
+			print "User requesting :",curr_user
+			print "Request", new_req
+			for group in groups.find():
+				if group['group_id'] == request.POST['group_id']:
+					found = 0
+					new_req_list = []
+					for req in group['requests']:
+						new_req_list.append(req)
+						if req['facebook_id']== new_req['facebook_id']:
+							found = 1
+					new_req_list.append(new_req)
+					if found == 0:
+						groups.update({"group_id":group['group_id']},{"group_id":group['group_id'],"members":group['members'],'admins':group['admins'],'requests' : new_req_list})
+						print "Request added"
+					else:
+						print "User request already added"
+
+		elif request.method == "GET" and not curr_user == "":
+			response = []
+			for group in groups.find():
+				response.append({"group_id":group['group_id'],"id":str(group["_id"]),"requests":group["requests"]})
+			print "Done searching"
+
+			result = filter(response,request)
+			response = []
+			for entry in result:
+				response.append(entry)
+
+			if response == []:
+				return "No response"
+			else:
+				print "Filtered:"
+				print response
+				return HttpResponse(simplejson.dumps(response),mimetype = "application/json")
+	return "Faulty run"
