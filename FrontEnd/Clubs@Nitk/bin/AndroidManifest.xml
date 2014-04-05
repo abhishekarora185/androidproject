@@ -46,6 +46,9 @@
             android:name="com.clubsatnitk.RequestActivity"
             android:label="@string/title_activity_request" >
         </activity>
+        <activity
+            android:name="com.clubsatnitk.MemberActivity" >
+        </activity>
     </application>
 
 </manifest>

@@ -26,7 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class RequestActivity extends Activity {
+public class MemberActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +82,7 @@ public class RequestActivity extends Activity {
 					     
 					     stringBuilder.append(childJSONObject.getString("group_id"));
 					     stringBuilder.append("\n");
-					     stringBuilder.append(childJSONObject.getString("requests"));
+					     stringBuilder.append(childJSONObject.getString("members"));
 					     stringBuilder.append("\n");
 					}
 					finalString = stringBuilder.toString(); 
@@ -104,7 +104,7 @@ public class RequestActivity extends Activity {
 				
 				map.add(new BasicNameValuePair("access_token", Session.getActiveSession().getAccessToken()));
 				map.add(new BasicNameValuePair("group_id", group_name.getText().toString()));
-				PostViews.addrequest(map);	
+				PostViews.addmember(map);	
 			}
 		});
 	}

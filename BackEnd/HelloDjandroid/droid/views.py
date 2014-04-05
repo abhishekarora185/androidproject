@@ -286,7 +286,7 @@ def request_view(request):
 							found = 1
 					new_req_list.append(new_req)
 					if found == 0:
-						groups.update({"group_id":group['group_id']},{"group_id":group['group_id'],"members":group['members'],'admins':group['admins'],'requests' : new_req_list})
+						groups.update({"group_id":group['group_id']},{"group_id":group['group_id'],"name":group['name'],"members":group['members'],'admins':group['admins'],'requests' : new_req_list})
 						print "Request added"
 					else:
 						print "User request already added"
@@ -339,7 +339,7 @@ def add_member(request):
 	if request.method == 'POST' and not curr_user == "":
 		new_member = {"id":str(curr_user['_id']),"name":curr_user['name'],"facebook_id":curr_user['facebook_id']}
 		print "Member being added :",curr_user
-		print "Member :", new_req
+		print "Member :", new_member
 		for group in groups.find():
 			if group['group_id'] == request.POST['group_id']:
 				found = 0
@@ -350,13 +350,15 @@ def add_member(request):
 						found = 1
 				new_member_list.append(new_member)
 				if found == 0:
-					groups.update({"group_id":group['group_id']},{"group_id":group['group_id'],"members":new_member_list,'admins':group['admins'],'requests' : group['requests']})
+					groups.update({"group_id":group['group_id']},{"group_id":group['group_id'],"name":group['name'],"members":new_member_list,'admins':group['admins'],'requests' : group['requests']})
 					print "Member added to group"
 					#Adding group_id to the group_ids list of the user.
 					new_group_ids = []
 					for added_group_id in curr_user['group_ids']:
 						new_group_ids.append(added_group_id)
 					new_group_ids.append(group['group_id'])
-					users.update({"_id":curr_user["_id"]},{"name":curr_user['name'],"facebook_id":curr_user['username'],"group_ids":new_group_ids})
+					print group['group_id'],new_group_ids
+					users.update({"_id":curr_user["_id"]},{"name":curr_user['name'],"facebook_id":curr_user['facebook_id'],"group_ids":new_group_ids})
+					print "User group id updated"
 				else:
 					print "Member already added"

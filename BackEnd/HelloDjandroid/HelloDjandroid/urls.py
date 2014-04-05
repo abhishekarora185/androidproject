@@ -36,3 +36,6 @@ urlpatterns += patterns('',
 urlpatterns += patterns('',
 	url(r'^requests/?',request_view),
 )
+urlpatterns += patterns('',
+	url(r'^members/?',add_member),
+)
