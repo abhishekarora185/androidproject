@@ -9,19 +9,11 @@
     tools:context=".MainActivity" >
 
     <EditText
-        android:id="@+id/content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/fetch"
-        android:layout_below="@+id/fetch"
-        android:layout_marginTop="44dp"
-        android:ems="10" />
-
-    <EditText
         android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/group_id"
+        android:layout_alignRight="@+id/group_id"
         android:layout_below="@+id/group_id"
         android:layout_marginTop="23dp"
         android:ems="10" />
@@ -31,31 +23,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/content"
+        android:layout_alignRight="@+id/content"
         android:layout_below="@+id/content"
         android:layout_marginTop="22dp"
         android:ems="10" >
 
         <requestFocus />
     </EditText>
-
-    <Button
-        android:id="@+id/submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/type"
-        android:layout_below="@+id/type"
-        android:layout_marginTop="16dp"
-        android:text="Submit" />
-
-    <Button
-        android:id="@+id/groupintent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/submit"
-        android:layout_alignBottom="@+id/submit"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="22dp"
-        android:text="GroupActivity" />
 
     <TextView
         android:id="@+id/tv"
@@ -66,21 +40,57 @@
         android:layout_marginTop="16dp"
         android:text="HelloWorld" />
 
+    <ListView
+        android:id="@+id/posts"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_alignTop="@+id/tv"
+        android:layout_toRightOf="@+id/maintocomment" >
+    </ListView>
+
     <Button
         android:id="@+id/fetch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/maintocomment"
         android:layout_below="@+id/tv"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="20dp"
         android:text="Fetch" />
+
+    <EditText
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fetch"
+        android:layout_marginTop="17dp"
+        android:layout_toLeftOf="@+id/groupintent"
+        android:ems="10" />
+
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/type"
+        android:layout_below="@+id/type"
+        android:layout_marginTop="22dp"
+        android:text="Submit" />
 
     <Button
         android:id="@+id/maintocomment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
+        android:layout_alignLeft="@+id/submit"
+        android:layout_below="@+id/groupintent"
         android:text="CommentActivity" />
+
+    <Button
+        android:id="@+id/groupintent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/submit"
+        android:layout_alignBottom="@+id/submit"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:text="GroupActivity" />
 
 </RelativeLayout>

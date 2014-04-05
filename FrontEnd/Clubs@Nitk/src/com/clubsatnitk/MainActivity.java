@@ -20,8 +20,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.facebook.*;
@@ -43,7 +45,9 @@ public class MainActivity extends Activity {
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy);
 		
-		final String post_ids[] = new String[100];
+		final JSONArray loadedPosts = new JSONArray();
+		
+		final ListView list = (ListView) findViewById(R.id.posts);
 		
 		final TextView welcome = (TextView) findViewById(R.id.tv);
 		final EditText content = (EditText) findViewById(R.id.content);
@@ -131,9 +135,11 @@ public class MainActivity extends Activity {
 				map.add(new BasicNameValuePair("type", "public"));
 				StringBuilder stringBuilder = new StringBuilder();
 				String finalString = "   ";
-				int posts_loaded = 0;
+				JSONArray response = null;
+				String postStrings[] = null;
 				try {
-					JSONArray response =  GetViews.posts(map);
+					response =  GetViews.posts(map);
+					postStrings = new String[response.length()];
 					Log.d("response",response.toString());
 					for (int i = 0; i < response.length() && i<5; i++) {  // **line 2**
 					     JSONObject childJSONObject = response.getJSONObject(i);
@@ -143,11 +149,7 @@ public class MainActivity extends Activity {
 					     stringBuilder.append("Content: " + childJSONObject.getString("content"));
 					     stringBuilder.append("\n");
 					     stringBuilder.append("Comments: \n");
-					     
-					     //needed to facilitate adding comments through UI
-					     post_ids[posts_loaded] = childJSONObject.getString("post_id");
-					     posts_loaded++;
-					     
+					    
 					     for(int j =0; j < childJSONObject.getJSONArray("comments").length(); j++)
 					     {
 					    	 JSONObject comment = childJSONObject.getJSONArray("comments").getJSONObject(j);
@@ -155,6 +157,9 @@ public class MainActivity extends Activity {
 					    	 stringBuilder.append("Author: " +  comment.getJSONObject("author").getString("name") + "\n");
 					    	 stringBuilder.append("Content: " +  comment.getString("content") + "\n");
 					     }
+					     
+					     postStrings[i] = "Author: " + childJSONObject.getString("author") + "\n" + "Content: " + childJSONObject.getString("content") + "\n";
+					     loadedPosts.put(childJSONObject);
 					}
 					finalString = stringBuilder.toString(); 
 				} catch (JSONException e) {
@@ -162,7 +167,7 @@ public class MainActivity extends Activity {
 					System.out.println("Response not proper");
 					e.printStackTrace();
 				}
-				welcome.setText(finalString);
+				list.setAdapter(new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,postStrings));
 			}
 		});
 	    
