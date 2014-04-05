@@ -66,7 +66,7 @@ def posts_view(request):
 			print "User already exists, " + str(curr_user['name'])
 		else:
 			print "Adding new user."
-			curr_user = {"name":auth_success['name'],"facebook_id":auth_success['username']}
+			curr_user = {"name":auth_success['name'],"facebook_id":auth_success['username'],"group_ids":[]}
 			print "New user"
 			print users
 			users.save(curr_user)
@@ -134,7 +134,7 @@ def group_view(request):
 			print "User already exists, " + str(curr_user['name'])
 		else:
 			print "Adding new user."
-			curr_user = {"name":auth_success['name'],"facebook_id":auth_success['username']}
+			curr_user = {"name":auth_success['name'],"facebook_id":auth_success['username'],"group_ids":[]}
 			print "New user"
 			print users
 			users.save(curr_user)
@@ -179,7 +179,7 @@ def comment_add(request):
 			print "User already exists, " + str(curr_user['name'])
 		else:
 			print "Adding new user."
-			curr_user = {"name":auth_success['name'],"facebook_id":auth_success['username']}
+			curr_user = {"name":auth_success['name'],"facebook_id":auth_success['username'],"group_ids":[]}
 			print "New user"
 			print users
 			users.save(curr_user)
@@ -222,7 +222,7 @@ def user_view(request):
 			print "User already exists, " + str(curr_user['name'])
 		else:
 			print "Adding new user."
-			curr_user = {"name":auth_success['name'],"facebook_id":auth_success['username']}
+			curr_user = {"name":auth_success['name'],"facebook_id":auth_success['username'],"group_ids":[]}
 			print "New user"
 			print users
 			users.save(curr_user)
@@ -268,7 +268,7 @@ def request_view(request):
 			print "User already exists, " + str(curr_user['name'])
 		else:
 			print "Adding new user."
-			curr_user = {"name":auth_success['name'],"facebook_id":auth_success['username']}
+			curr_user = {"name":auth_success['name'],"facebook_id":auth_success['username'],"group_ids":[]}
 			print "New user"
 			print users
 			users.save(curr_user)
@@ -309,3 +309,54 @@ def request_view(request):
 				print response
 				return HttpResponse(simplejson.dumps(response),mimetype = "application/json")
 	return "Faulty run"
+
+@csrf_exempt
+def add_member(request):
+	print "Authenticating"
+	auth_success = facebook_auth(request)
+	posts = db['Post']
+	users = db['User']
+	groups = db['Group']
+	
+	curr_user = ''
+	
+	if not auth_success == False:
+		found = 0
+		for user in users.find():
+			if auth_success['username'] == user['facebook_id']:
+				found = 1
+				curr_user = user
+				break
+		if found == 1:
+			print "User already exists, " + str(curr_user['name'])
+		else:
+			print "Adding new user."
+			curr_user = {"name":auth_success['name'],"facebook_id":auth_success['username'],"group_ids":[]}
+			print "New user"
+			print users
+			users.save(curr_user)
+
+	if request.method == 'POST' and not curr_user == "":
+		new_member = {"id":str(curr_user['_id']),"name":curr_user['name'],"facebook_id":curr_user['facebook_id']}
+		print "Member being added :",curr_user
+		print "Member :", new_req
+		for group in groups.find():
+			if group['group_id'] == request.POST['group_id']:
+				found = 0
+				new_member_list = []
+				for member in group['members']:
+					new_member_list.append(member)
+					if member['facebook_id']== new_member['facebook_id']:
+						found = 1
+				new_member_list.append(new_member)
+				if found == 0:
+					groups.update({"group_id":group['group_id']},{"group_id":group['group_id'],"members":new_member_list,'admins':group['admins'],'requests' : group['requests']})
+					print "Member added to group"
+					#Adding group_id to the group_ids list of the user.
+					new_group_ids = []
+					for added_group_id in curr_user['group_ids']:
+						new_group_ids.append(added_group_id)
+					new_group_ids.append(group['group_id'])
+					users.update({"_id":curr_user["_id"]},{"name":curr_user['name'],"facebook_id":curr_user['username'],"group_ids":new_group_ids})
+				else:
+					print "Member already added"
